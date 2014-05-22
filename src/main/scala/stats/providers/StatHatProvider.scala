@@ -1,0 +1,1 @@
+trait StatHatProvider extends StatsProvider {}
