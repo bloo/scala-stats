@@ -1,5 +1,6 @@
 .project
 .classpath
+.cache
 target
 bin
 *~
