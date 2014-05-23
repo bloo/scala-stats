@@ -9,20 +9,21 @@ class StatHatProvider(config: Config) extends StatsProvider with LazyLogging {
   private val ezKey = config getString "stathat.ezKey"
   private val verbose = config getBoolean "stathat.verbose"
 
-  def count(c: Double)(implicit stat: String) = _post("count", c)
-  def value(v: Double)(implicit stat: String) = _post("value", v)
+  def count[C](c: C)(implicit stat: String, num: Numeric[C]) = _post("count", c)
+  def value[V](v: V)(implicit stat: String, num: Numeric[V]) = _post("value", v)
 
   import java.io.OutputStreamWriter
   import java.net.{URL,URLEncoder}
 
-  private def _post(valType: String, value: Double)(implicit stat: String) = {
+  private def _post[X](valType: String, value: X)(implicit stat: String, num: Numeric[X]) = {
 
     val paramEz = URLEncoder.encode("ezkey", "UTF-8")
     val valEz = URLEncoder.encode(ezKey, "UTF-8")
     val paramStat = URLEncoder.encode("stat", "UTF-8")
     val valStat = URLEncoder.encode(stat, "UTF-8")
     val paramVal = URLEncoder.encode(valType, "UTF-8")
-    val valVal = URLEncoder.encode(value.toString(), "UTF-8")
+//    val valVal = URLEncoder.encode(value.toString(), "UTF-8")
+    val valVal = URLEncoder.encode(num.toString(), "UTF-8")
 
     val data = s"$paramEz=$valEz&$paramStat=$valStat&$paramVal=$valVal"
 
