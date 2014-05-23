@@ -25,6 +25,10 @@ class StatHatProvider(config: Config) extends StatsProvider with LazyLogging {
 //    val valVal = URLEncoder.encode(value.toString(), "UTF-8")
     val valVal = URLEncoder.encode(num.toString(), "UTF-8")
 
+    logger.info(s"value: $value")
+    logger.info(s"num: $num")
+    logger.info(s"vv: $valVal")
+    
     val data = s"$paramEz=$valEz&$paramStat=$valStat&$paramVal=$valVal"
 
     val conn = new URL(ezUrl).openConnection()

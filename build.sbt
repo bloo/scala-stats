@@ -16,4 +16,5 @@ libraryDependencies ++= Seq(
 	// test libs
 	"org.specs2"        %% "specs2"  % "2.3.12" % "test",
 	"com.typesafe.play" %% "play-test" % "2.2.0" % "test"
+	//"org.clapper"       %% "grizzled-scala" % "1.2"
 )
