@@ -6,13 +6,22 @@ import scala.async.Async.{ async, await }
 import providers._
 
 object Stats {
-  
-  private val config = ConfigFactory.load().getConfig("stats")
 
-  lazy val provider: StatsProvider = config getString "provider" match {
-    case "stathat" => new StatHatProvider(config)
-    case _ => new NoOpProvider
+  private var _provider: Option[StatsProvider] = None
+
+  def init(config: Config = ConfigFactory.load()): StatsProvider = _provider match {
+    case Some(p) => p
+    case None => {
+      val p = config getString "stats.provider" match {
+        case "stathat" => new StatHatProvider(config.getConfig("stats.stathat"))
+        case _ => new NoOpProvider
+      }
+      _provider = Some(p)
+      p
+    }
   }
+
+  lazy private val provider: StatsProvider = init()
 
   def count[C](c: C)(implicit stat: String, num: Numeric[C]) = async { provider count c }
   def value[V](v: V)(implicit stat: String, num: Numeric[V]) = async { provider value v }
@@ -21,5 +30,5 @@ object Stats {
   def ++(implicit stat: String) = increment
   def --(implicit stat: String) = decrement
   def +=[V](v: V)(implicit stat: String, num: Numeric[V]) = value(v)
-//  def -=[V](v: V)(implicit stat: String, num: Numeric[V]) = value(v*-1)
+  //  def -=[V](v: V)(implicit stat: String, num: Numeric[V]) = value(v*-1)
 }
